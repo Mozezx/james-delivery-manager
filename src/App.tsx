@@ -5,6 +5,7 @@ import Layout from '@/components/Layout'
 import Login from '@/pages/Login'
 import Inicio from '@/pages/Inicio'
 import Estilo from '@/pages/Estilo'
+import Insumos from '@/pages/Insumos'
 import EmConstrucao from '@/pages/EmConstrucao'
 import { Toaster } from '@/components/ui/sonner'
 
@@ -24,10 +25,7 @@ export default function App() {
           >
             <Route index element={<Inicio />} />
             <Route path="estilo" element={<Estilo />} />
-            <Route
-              path="insumos"
-              element={<EmConstrucao titulo="Insumos" fase="Fase 3" />}
-            />
+            <Route path="insumos" element={<Insumos />} />
             <Route
               path="pratos"
               element={<EmConstrucao titulo="Pratos" fase="Fase 4" />}
