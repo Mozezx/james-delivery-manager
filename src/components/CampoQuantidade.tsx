@@ -9,12 +9,14 @@ export default function CampoQuantidade({
   id,
   valor,
   onChange,
+  onBlur,
   unidade,
   className,
 }: {
   id?: string
   valor: string
   onChange: (texto: string) => void
+  onBlur?: () => void
   unidade: string
   className?: string
 }) {
@@ -28,6 +30,7 @@ export default function CampoQuantidade({
         placeholder="0"
         value={valor}
         onChange={(e) => onChange(e.target.value)}
+        onBlur={onBlur}
         className="h-12 pr-12 text-base tabular-nums md:h-9 md:text-sm"
       />
       <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium text-muted-foreground">
