@@ -1,18 +1,31 @@
 import { describe, expect, it } from 'vitest'
 import {
+  agregarPorCanal,
+  agregarPorPrato,
   calcularFatorRendimento,
+  chaveParPratoCanal,
   comissaoEmReais,
   custoDireto,
   custoFixoPorMarmita,
   custoItemFicha,
   custoPorPorcao,
   custoPorUnidade,
+  diasComVenda,
+  divergeDaEstimativa,
+  lucroEstimado,
   lucroPorUnidade,
   margemEfetiva,
+  pratoMaisLucrativo,
+  pratoMaisVendido,
   precoSugerido,
   precosPsicologicos,
   quantidadeCrua,
+  receitaEstimada,
+  ritmoMensalizado,
+  totalMarmitas,
   type InsumoParaCusto,
+  type MapaPrecoLucro,
+  type VendaParaAgregacao,
 } from './calculos'
 
 describe('custoPorUnidade', () => {
@@ -229,5 +242,150 @@ describe('consistência preço sugerido × margem efetiva', () => {
     const preco = precoSugerido(13.47, 25, 0, 30)
     expect(preco).not.toBeNull()
     expect(margemEfetiva(preco as number, 13.47, 25, 0)).toBeCloseTo(0.3, 2)
+  })
+})
+
+// ---------- Fase 7: registro de vendas e visão do mês ----------
+// Preços/lucros de referência: venda direta 19,25 (lucro 5,78) e
+// iFood 29,93 (lucro 8,98) — mesmos números da Fase 6.
+
+const marmitaId = 'marmita-padrao'
+const outraId = 'prato-caro'
+const diretoId = 'canal-direto'
+const ifoodId = 'canal-ifood'
+
+const precos: MapaPrecoLucro = {
+  [chaveParPratoCanal(marmitaId, diretoId)]: { preco: 19.25, lucroUnidade: 5.78 },
+  [chaveParPratoCanal(marmitaId, ifoodId)]: { preco: 29.93, lucroUnidade: 8.98 },
+  [chaveParPratoCanal(outraId, diretoId)]: { preco: 40, lucroUnidade: 15 },
+}
+
+describe('chaveParPratoCanal', () => {
+  it('combina prato e canal com separador estável', () => {
+    expect(chaveParPratoCanal('p1', 'c1')).toBe('p1:c1')
+  })
+})
+
+describe('totalMarmitas', () => {
+  it('soma a quantidade de todas as vendas', () => {
+    const vendas: VendaParaAgregacao[] = [
+      { data: '2026-07-01', prato_id: marmitaId, canal_id: diretoId, quantidade: 3 },
+      { data: '2026-07-01', prato_id: marmitaId, canal_id: ifoodId, quantidade: 2 },
+    ]
+    expect(totalMarmitas(vendas)).toBe(5)
+  })
+
+  it('retorna 0 para lista vazia', () => {
+    expect(totalMarmitas([])).toBe(0)
+  })
+})
+
+describe('receitaEstimada', () => {
+  it('soma quantidade × preço em uso de cada par prato×canal', () => {
+    const vendas: VendaParaAgregacao[] = [
+      { data: '2026-07-01', prato_id: marmitaId, canal_id: diretoId, quantidade: 2 },
+      { data: '2026-07-01', prato_id: marmitaId, canal_id: ifoodId, quantidade: 1 },
+    ]
+    expect(receitaEstimada(vendas, precos)).toBeCloseTo(2 * 19.25 + 1 * 29.93, 2)
+  })
+
+  it('ignora (soma 0) um par sem preço resolvido no mapa', () => {
+    const vendas: VendaParaAgregacao[] = [
+      { data: '2026-07-01', prato_id: 'prato-sem-preco', canal_id: diretoId, quantidade: 5 },
+    ]
+    expect(receitaEstimada(vendas, precos)).toBe(0)
+  })
+})
+
+describe('lucroEstimado', () => {
+  it('soma quantidade × lucro por unidade de cada par prato×canal', () => {
+    const vendas: VendaParaAgregacao[] = [
+      { data: '2026-07-01', prato_id: marmitaId, canal_id: diretoId, quantidade: 4 },
+      { data: '2026-07-01', prato_id: marmitaId, canal_id: ifoodId, quantidade: 1 },
+    ]
+    expect(lucroEstimado(vendas, precos)).toBeCloseTo(4 * 5.78 + 1 * 8.98, 2)
+  })
+})
+
+describe('agregarPorPrato / pratoMaisVendido / pratoMaisLucrativo', () => {
+  it('mais vendido pode divergir do mais lucrativo (mais volume e barato × menos volume e caro)', () => {
+    const vendas: VendaParaAgregacao[] = [
+      // marmita: mais volume, lucro menor por unidade (5×5,78 = 28,90)
+      { data: '2026-07-01', prato_id: marmitaId, canal_id: diretoId, quantidade: 5 },
+      // prato caro: menos volume, lucro maior por unidade (3×15 = 45,00)
+      { data: '2026-07-01', prato_id: outraId, canal_id: diretoId, quantidade: 3 },
+    ]
+    const ranking = agregarPorPrato(vendas, precos)
+
+    expect(pratoMaisVendido(ranking)?.prato_id).toBe(marmitaId) // 5 > 3
+    expect(pratoMaisLucrativo(ranking)?.prato_id).toBe(outraId) // 45 > 28,90
+  })
+
+  it('retorna null para ranking vazio', () => {
+    expect(pratoMaisVendido([])).toBeNull()
+    expect(pratoMaisLucrativo([])).toBeNull()
+  })
+})
+
+describe('agregarPorCanal', () => {
+  it('agrega volume, receita e lucro por canal, somando todos os pratos', () => {
+    const vendas: VendaParaAgregacao[] = [
+      { data: '2026-07-01', prato_id: marmitaId, canal_id: diretoId, quantidade: 2 },
+      { data: '2026-07-01', prato_id: outraId, canal_id: diretoId, quantidade: 1 },
+      { data: '2026-07-01', prato_id: marmitaId, canal_id: ifoodId, quantidade: 3 },
+    ]
+    const resultado = agregarPorCanal(vendas, precos)
+    const direto = resultado.find((c) => c.canal_id === diretoId)
+    const ifood = resultado.find((c) => c.canal_id === ifoodId)
+
+    expect(direto?.quantidade).toBe(3)
+    expect(direto?.receita).toBeCloseTo(2 * 19.25 + 1 * 40, 2)
+    expect(direto?.lucro).toBeCloseTo(2 * 5.78 + 1 * 15, 2)
+
+    expect(ifood?.quantidade).toBe(3)
+    expect(ifood?.receita).toBeCloseTo(3 * 29.93, 2)
+  })
+})
+
+describe('diasComVenda', () => {
+  it('conta dias distintos, ignorando duplicatas de prato/canal no mesmo dia', () => {
+    const vendas: VendaParaAgregacao[] = [
+      { data: '2026-07-01', prato_id: marmitaId, canal_id: diretoId, quantidade: 2 },
+      { data: '2026-07-01', prato_id: marmitaId, canal_id: ifoodId, quantidade: 1 },
+      { data: '2026-07-02', prato_id: marmitaId, canal_id: diretoId, quantidade: 4 },
+    ]
+    expect(diasComVenda(vendas)).toBe(2)
+  })
+
+  it('retorna 0 para lista vazia', () => {
+    expect(diasComVenda([])).toBe(0)
+  })
+})
+
+describe('ritmoMensalizado', () => {
+  it('60 marmitas em 10 dias com venda, 20 dias trabalhados/mês → ritmo 120', () => {
+    expect(ritmoMensalizado(60, 10, 20)).toBeCloseTo(120)
+  })
+
+  it('retorna 0 quando não há nenhum dia com venda (evita divisão por zero)', () => {
+    expect(ritmoMensalizado(0, 0, 20)).toBe(0)
+  })
+})
+
+describe('divergeDaEstimativa', () => {
+  it('200 estimadas / ritmo 120 → diverge (40%)', () => {
+    expect(divergeDaEstimativa(120, 200)).toBe(true)
+  })
+
+  it('200 estimadas / ritmo 190 → não diverge (5%)', () => {
+    expect(divergeDaEstimativa(190, 200)).toBe(false)
+  })
+
+  it('no limiar exato (20%) não diverge — é preciso passar do limite', () => {
+    expect(divergeDaEstimativa(160, 200)).toBe(false)
+  })
+
+  it('retorna false quando a estimativa é 0 (evita divisão por zero)', () => {
+    expect(divergeDaEstimativa(120, 0)).toBe(false)
   })
 })

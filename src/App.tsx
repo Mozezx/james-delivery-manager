@@ -10,7 +10,7 @@ import Pratos from '@/pages/Pratos'
 import EditorPrato from '@/pages/EditorPrato'
 import Custos from '@/pages/Custos'
 import Precos from '@/pages/Precos'
-import EmConstrucao from '@/pages/EmConstrucao'
+import Vendas from '@/pages/Vendas'
 import { Toaster } from '@/components/ui/sonner'
 
 export default function App() {
@@ -34,10 +34,7 @@ export default function App() {
             <Route path="pratos/:id" element={<EditorPrato />} />
             <Route path="custos" element={<Custos />} />
             <Route path="precos" element={<Precos />} />
-            <Route
-              path="vendas"
-              element={<EmConstrucao titulo="Vendas" fase="Fase 7" />}
-            />
+            <Route path="vendas" element={<Vendas />} />
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
