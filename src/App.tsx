@@ -8,6 +8,7 @@ import Estilo from '@/pages/Estilo'
 import Insumos from '@/pages/Insumos'
 import Pratos from '@/pages/Pratos'
 import EditorPrato from '@/pages/EditorPrato'
+import Custos from '@/pages/Custos'
 import EmConstrucao from '@/pages/EmConstrucao'
 import { Toaster } from '@/components/ui/sonner'
 
@@ -30,10 +31,7 @@ export default function App() {
             <Route path="insumos" element={<Insumos />} />
             <Route path="pratos" element={<Pratos />} />
             <Route path="pratos/:id" element={<EditorPrato />} />
-            <Route
-              path="custos"
-              element={<EmConstrucao titulo="Custos fixos" fase="Fase 5" />}
-            />
+            <Route path="custos" element={<Custos />} />
             <Route
               path="precos"
               element={<EmConstrucao titulo="Preços" fase="Fase 6" />}
