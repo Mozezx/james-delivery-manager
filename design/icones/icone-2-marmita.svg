@@ -1,0 +1,24 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" width="512" height="512">
+  <!-- Fundo arredondado creme -->
+  <rect x="0" y="0" width="512" height="512" rx="96" ry="96" fill="#FAF6F0"/>
+
+  <!-- Container/marmita: contorno externo -->
+  <rect x="100" y="120" width="312" height="280" rx="36" fill="#C4552D"/>
+
+  <!-- Divisórias internas (3 compartimentos) -->
+  <!-- Compartimento 1 (maior - arroz/principal) -->
+  <ellipse cx="180" cy="220" rx="70" ry="85" fill="#FDF9F4"/>
+
+  <!-- Compartimento 2 (proteína) -->
+  <ellipse cx="320" cy="180" rx="60" ry="70" fill="#FDF9F4"/>
+
+  <!-- Compartimento 3 (guarnição) -->
+  <ellipse cx="320" cy="280" rx="60" ry="70" fill="#FDF9F4"/>
+
+  <!-- Linhas divisórias sutis (bordas dos compartimentos) -->
+  <line x1="240" y1="140" x2="240" y2="340" stroke="#2A1F1A" stroke-width="6" opacity="0.15"/>
+  <line x1="240" y1="220" x2="380" y2="220" stroke="#2A1F1A" stroke-width="6" opacity="0.15"/>
+
+  <!-- Tampa/rebordo superior fino -->
+  <rect x="95" y="115" width="322" height="18" rx="9" fill="#2A1F1A" opacity="0.08"/>
+</svg>

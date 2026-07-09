@@ -1,0 +1,24 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" width="512" height="512">
+  <!-- Fundo arredondado terracota -->
+  <rect x="0" y="0" width="512" height="512" rx="96" ry="96" fill="#C4552D"/>
+
+  <!-- Garfo (à esquerda) -->
+  <!-- Haste principal -->
+  <rect x="90" y="200" width="50" height="200" rx="25" fill="#FDF9F4"/>
+
+  <!-- Dentes do garfo (3 prongs) -->
+  <rect x="70" y="80" width="35" height="140" rx="18" fill="#FDF9F4"/>
+  <rect x="120" y="60" width="35" height="160" rx="18" fill="#FDF9F4"/>
+  <rect x="170" y="80" width="35" height="140" rx="18" fill="#FDF9F4"/>
+
+  <!-- Conexão dos dentes à haste -->
+  <ellipse cx="115" cy="210" rx="65" ry="35" fill="#FDF9F4"/>
+
+  <!-- Cifrão (à direita, discreto) -->
+  <!-- Corpo do S do cifrão -->
+  <path d="M 330 150 Q 380 150 380 190 Q 380 220 350 230 Q 380 240 380 270 Q 380 310 330 310 Q 300 310 290 295"
+        stroke="#FDF9F4" stroke-width="28" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Linha vertical do cifrão -->
+  <line x1="360" y1="140" x2="360" y2="320" stroke="#FDF9F4" stroke-width="20" stroke-linecap="round" opacity="0.7"/>
+</svg>

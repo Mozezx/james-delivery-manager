@@ -1,0 +1,15 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" width="512" height="512">
+  <!-- Fundo arredondado creme -->
+  <rect x="0" y="0" width="512" height="512" rx="96" ry="96" fill="#FAF6F0"/>
+
+  <!-- Letra J customizada em terracota -->
+  <!-- Haste vertical principal -->
+  <rect x="200" y="80" width="90" height="280" rx="45" fill="#C4552D"/>
+
+  <!-- Curva inferior do J -->
+  <path d="M 200 340 Q 150 340 150 390 Q 150 440 200 450 L 290 450 Q 340 440 340 390"
+        stroke="#C4552D" stroke-width="90" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Ponto decorativo sutil (pequeno círculo acima) -->
+  <circle cx="245" cy="60" r="22" fill="#C4552D" opacity="0.6"/>
+</svg>

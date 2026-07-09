@@ -4,6 +4,7 @@ import RotaProtegida from '@/components/RotaProtegida'
 import Layout from '@/components/Layout'
 import Login from '@/pages/Login'
 import Inicio from '@/pages/Inicio'
+import Estilo from '@/pages/Estilo'
 import EmConstrucao from '@/pages/EmConstrucao'
 import { Toaster } from '@/components/ui/sonner'
 
@@ -22,6 +23,7 @@ export default function App() {
             }
           >
             <Route index element={<Inicio />} />
+            <Route path="estilo" element={<Estilo />} />
             <Route
               path="insumos"
               element={<EmConstrucao titulo="Insumos" fase="Fase 3" />}
