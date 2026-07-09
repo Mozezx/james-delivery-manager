@@ -1,4 +1,7 @@
+import { Link } from 'react-router-dom'
+import { Palette } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 
 export default function Inicio() {
   return (
@@ -10,6 +13,12 @@ export default function Inicio() {
         A fundação do app está no ar. As telas de trabalho chegam nas próximas
         fases — comece pelos insumos quando a Fase 3 for entregue.
       </p>
+      <Button asChild className="mt-4 h-12">
+        <Link to="/estilo">
+          <Palette className="size-4" aria-hidden />
+          Ver o guia de estilo (entrega da Fase 1)
+        </Link>
+      </Button>
       <Card className="mt-4 border-dashed">
         <CardContent className="py-8 text-sm text-muted-foreground">
           <p className="font-medium text-foreground">Ordem de chegada:</p>
