@@ -1,10 +1,16 @@
 import { describe, expect, it } from 'vitest'
 import {
   calcularFatorRendimento,
+  comissaoEmReais,
   custoDireto,
+  custoFixoPorMarmita,
   custoItemFicha,
   custoPorPorcao,
   custoPorUnidade,
+  lucroPorUnidade,
+  margemEfetiva,
+  precoSugerido,
+  precosPsicologicos,
   quantidadeCrua,
   type InsumoParaCusto,
 } from './calculos'
@@ -127,5 +133,101 @@ describe('custoPorPorcao', () => {
   it('retorna 0 quando rendePorcoes é 0 (guarda contra divisão por zero)', () => {
     const itens = [{ quantidade_pronta: 150, insumo: arroz }]
     expect(custoPorPorcao(itens, 0)).toBe(0)
+  })
+})
+
+// ---------- Fase 5: rateio de custos fixos ----------
+
+describe('custoFixoPorMarmita', () => {
+  it('exemplo de referência: 1025 ÷ (10 × 20) ≈ R$ 5,125', () => {
+    expect(custoFixoPorMarmita(1025, 10, 20)).toBeCloseTo(5.125, 3)
+  })
+
+  it('retorna 0 quando vendas estimadas/dia é 0', () => {
+    expect(custoFixoPorMarmita(1025, 0, 20)).toBe(0)
+  })
+
+  it('retorna 0 quando dias trabalhados/mês é 0', () => {
+    expect(custoFixoPorMarmita(1025, 10, 0)).toBe(0)
+  })
+})
+
+// ---------- Fase 6: precificação por canal ----------
+// Custo total de referência (CLAUDE.md): R$ 13,47 (8,34 direto + 5,13 rateio).
+
+describe('precoSugerido', () => {
+  it('venda direta (sem comissão nem taxa), margem 30% → ≈ R$ 19,2428 (exibição arredonda p/ 19,25)', () => {
+    expect(precoSugerido(13.47, 0, 0, 30)).toBeCloseTo(19.24, 2)
+  })
+
+  it('iFood (comissão 25%), margem 30% → ≈ R$ 29,933', () => {
+    expect(precoSugerido(13.47, 25, 0, 30)).toBeCloseTo(29.93, 2)
+  })
+
+  it('retorna null quando comissão + taxa + margem = 100% (denominador zero)', () => {
+    expect(precoSugerido(13.47, 25, 0, 75)).toBeNull()
+  })
+
+  it('retorna null quando comissão + taxa + margem > 100%', () => {
+    expect(precoSugerido(13.47, 50, 30, 40)).toBeNull()
+  })
+})
+
+describe('comissaoEmReais', () => {
+  it('R$ 29,93 a 25% comissão + 0% taxa ≈ R$ 7,4825', () => {
+    expect(comissaoEmReais(29.93, 25, 0)).toBeCloseTo(7.4825, 4)
+  })
+})
+
+describe('lucroPorUnidade', () => {
+  it('venda direta: preço 19,25, custo 13,47, sem comissão/taxa ≈ R$ 5,78', () => {
+    expect(lucroPorUnidade(19.25, 13.47, 0, 0)).toBeCloseTo(5.78, 2)
+  })
+
+  it('iFood: preço 29,93, custo 13,47, comissão 25% ≈ R$ 8,9775', () => {
+    expect(lucroPorUnidade(29.93, 13.47, 25, 0)).toBeCloseTo(8.98, 2)
+  })
+})
+
+describe('margemEfetiva', () => {
+  it('venda direta: preço 19,25, custo 13,47 → fração ≈ 0,3003', () => {
+    expect(margemEfetiva(19.25, 13.47, 0, 0)).toBeCloseTo(0.3003, 3)
+  })
+
+  it('retorna 0 quando o preço é 0 (sem divisão por zero)', () => {
+    expect(margemEfetiva(0, 13.47, 0, 0)).toBe(0)
+  })
+
+  it('retorna margem negativa quando o custo supera o preço', () => {
+    expect(margemEfetiva(10, 13.47, 0, 0)).toBeLessThan(0)
+  })
+})
+
+describe('precosPsicologicos', () => {
+  it('19,25 → [18,90, 19,00, 19,90, 20,00]', () => {
+    expect(precosPsicologicos(19.25)).toEqual([18.9, 19, 19.9, 20])
+  })
+
+  it('19,00 inclui 18,90 e 19,90 sem duplicar 19,00', () => {
+    const resultado = precosPsicologicos(19.0)
+    expect(resultado).toContain(18.9)
+    expect(resultado).toContain(19.9)
+    expect(resultado.filter((valor) => valor === 19).length).toBe(1)
+  })
+
+  it('retorna [] para preço 0', () => {
+    expect(precosPsicologicos(0)).toEqual([])
+  })
+
+  it('retorna [] para preço negativo', () => {
+    expect(precosPsicologicos(-5)).toEqual([])
+  })
+})
+
+describe('consistência preço sugerido × margem efetiva', () => {
+  it('o preço sugerido para 30% de margem, ao ser recalculado, produz margem efetiva ≈ 30%', () => {
+    const preco = precoSugerido(13.47, 25, 0, 30)
+    expect(preco).not.toBeNull()
+    expect(margemEfetiva(preco as number, 13.47, 25, 0)).toBeCloseTo(0.3, 2)
   })
 })

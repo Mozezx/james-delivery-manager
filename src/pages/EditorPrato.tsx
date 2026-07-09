@@ -9,6 +9,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import Dinheiro from '@/components/Dinheiro'
 import CampoQuantidade from '@/components/CampoQuantidade'
 import FotoPrato from '@/components/pratos/FotoPrato'
+import PrecificacaoPrato from '@/components/pratos/PrecificacaoPrato'
 import {
   usePrato,
   useCriarPrato,
@@ -472,6 +473,8 @@ export default function EditorPrato() {
               cru é automática pelo fator de rendimento.
             </p>
           </div>
+
+          <PrecificacaoPrato prato={prato} custoPorcaoDireto={custoPorcao} />
 
           <div className="mt-8">
             <Button

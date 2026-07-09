@@ -76,6 +76,28 @@
 
 /* Tema escuro fica no roadmap (CLAUDE.md) — MVP é só claro. */
 
+/* Thumb do slider de margem: alvo de toque generoso, cor primária */
+.slider-margem::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  background: var(--primary);
+  border: 3px solid var(--card);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.3);
+  cursor: pointer;
+}
+.slider-margem::-moz-range-thumb {
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  background: var(--primary);
+  border: 3px solid var(--card);
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.3);
+  cursor: pointer;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

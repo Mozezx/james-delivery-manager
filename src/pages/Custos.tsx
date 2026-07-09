@@ -20,7 +20,7 @@ import type { CustoFixo, Canal } from '@/lib/tipos'
 export default function Custos() {
   const { data: custosFixos, isLoading: carregandoCustos, isError: erroCustos } = useCustosFixos()
   const { data: canais, isLoading: carregandoCanais, isError: erroCanais } = useCanais()
-  const { data: config, isLoading: carregandoConfig } = useConfig()
+  const { data: config, isLoading: carregandoConfig, isError: erroConfig } = useConfig()
   const atualizarConfig = useAtualizarConfig()
 
   const [mostrarCustosArquivados, setMostrarCustosArquivados] = useState(false)
@@ -118,7 +118,11 @@ export default function Custos() {
         <CardContent className="space-y-4 pt-4">
           <div>
             <p className="text-sm text-muted-foreground">Custo fixo por marmita</p>
-            {carregandoConfig ? (
+            {erroConfig ? (
+              <p className="text-sm text-destructive">
+                Não deu para carregar as estimativas. Verifique a conexão e recarregue.
+              </p>
+            ) : carregandoConfig ? (
               <p className="text-sm text-muted-foreground">Carregando...</p>
             ) : (
               <>
